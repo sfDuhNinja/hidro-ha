@@ -1,149 +1,89 @@
-# hidro-ha
+# Hidroelectrica pentru Home Assistant
 
-Integrare Home Assistant pentru Hidroelectrica (iHidro) — vizibilitate pe costuri
-pentru locuința din București (`ha-dizonaur`, HA „Dizonaur").
+Integrare neoficială pentru contul [iHidro](https://ihidro.ro) (Hidroelectrica România):
+sold, scadență, indexul contorului, consum, trimiterea autocitirii și, pentru
+**prosumatori**, energia produsă și compensațiile ANRE.
 
-Suportă și conturile de **prosumator** (contor bidirecțional) — vezi secțiunea de mai jos.
-
-## Stadiu
-
-- [x] Faza 0 — recon rulat, fixture-uri capturate
-- [x] Faza 1 — citire: 5 entități
-- [x] Trimiterea indexului — buton + senzor de status, 66 de teste trec
-- [x] Instalat pe `ha-dizonaur`
-
-## Faza 0
-
-```
-python3 tools/recon.py          # refolosește sesiunea salvată
-python3 tools/recon.py --login  # forțează autentificare nouă
-```
-
-Parola se cere interactiv, nu se afișează și nu ajunge pe disc. Se salvează doar tokenul
-de sesiune, în `~/.config/hidro-recon/session.json` (permisiuni 600), în afara proiectului.
-
-## Diferențe față de integrarea upstream
-
-[cnecrea/hidroelectrica](https://github.com/cnecrea/hidroelectrica) e MIT, dar are gate
-de licență plătită. Cunoașterea API-ului e preluată de acolo (permis de MIT); codul e scris
-de la zero, fără gate.
-
-**Verificarea TLS rămâne activă.** Upstream dezactivează validarea certificatului
-(`CERT_NONE`) cu motivul „certificat problematic". Verificat pe 2026-08-19: certificatul
-`ihidro.ro` e valid (Sectigo OV, expiră 16.03.2027) și trece validarea normală. Cum prin
-conexiune trece parola contului, nu există motiv să renunțăm la verificare.
-
-## API
-
-Backend SmartCMobile, proxy `https://ihidro.ro`, headere `SourceType: 0` (pre-auth) și
-`1` (post-auth).
-
-Autentificare în doi pași, **fără MFA**:
-1. `POST /API/UserLogin/GetId` → `key`, `tokenId`
-2. `POST /API/UserLogin/ValidateUserLogin` cu `Basic base64(key:tokenId)` → `UserID`, `SessionToken`
-
-Apelurile de date folosesc `Basic base64(UserID:SessionToken)`.
-Răspunsurile sunt împachetate ca `{result: {Data: {...}}}`.
-
-| Zonă | Endpoint |
-|---|---|
-| Conturi | `UserLogin/GetUserSetting` |
-| Factură curentă | `Billing/GetBill` |
-| Istoric facturi | `Billing/GetBillingHistoryList` |
-| Consum | `Usage/GetUsageGeneration` |
-| Contor | `Usage/GetMultiMeter`, `SelfMeterReading/GetMeterValue` |
-| Fereastră autocitire | `SelfMeterReading/GetWindowDates` |
-| Istoric citiri | `IndexHistory/GetMeterReadHistory` |
-
-## Entități (citire)
-
-| Entitate | Sursă |
-|---|---|
-| `sensor.hidroelectrica_sold_de_plata` | `GetBill` |
-| `sensor.hidroelectrica_scadenta` | `GetBill` (`timestamp`) |
-| `sensor.hidroelectrica_index_contor` | `GetMeterReadHistory` |
-| `sensor.hidroelectrica_consum_ultima_perioada` | delta ultimelor două citiri |
-| `binary_sensor.hidroelectrica_fereastra_autocitire` | `GetWindowDates` |
-
-## Prosumator
-
-Detectat automat: contorul întoarce citiri pe registrul `1.8.0_P` (energie injectată).
-Registrele nu se amestecă — `Index contor` și `Consum ultima perioadă` folosesc doar `1.8.0`.
-
-| Entitate (doar la prosumator) | Sursă |
-|---|---|
-| `sensor.…_index_energie_produsa` | `GetMeterReadHistory`, registrul `1.8.0_P` |
-| `sensor.…_productie_ultima_perioada` | delta ultimelor două citiri de producție |
-| `sensor.…_compensatii_anre_primite` | `GetBillingHistoryList`, plățile cu canal `Comp ANRE…` |
-
-Butonul de trimitere index e **indisponibil** pentru prosumator (citirea o face distribuitorul).
-
-> Structura datelor de prosumator e construită după integrarea upstream, nu după o captură
-> reală; fixture-urile `*_prosumer.json` sunt sintetice. Verifică valorile pe un cont real.
-
-## Ce NU se poate
-
-- **Serie de consum lunar.** Contorul nu e AMI (`IsAMI: false`, `UsageCycle: "NA"`);
-  `GetUsageGeneration` întoarce `objUsageGenerationResultSetTwo: []` indiferent de
-  parametri. Singura măsură de consum e delta dintre citiri.
-- **Istoric de facturi.** `GetBillingHistoryList` răspunde 200, dar toate cele trei
-  entități sunt `None` pentru acest cont.
-- **Index curent în afara ferestrei.** `GetMeterValue` și `GetPreviousMeterRead`
-  întorc HTTP 400 cât timp fereastra de autocitire e închisă.
-
-## Trimiterea indexului
-
-`input_number.index_hidroelectrica_de_trimis` (helper) + `button.…_trimite_indexul`.
-Butonul e **indisponibil** în afara ferestrei de autocitire.
-
-La apăsare, în ordine — fiecare pas poate opri fluxul:
-
-1. verificări locale: fereastră deschisă, valoare întreagă, ≥ ultimul index din istoric,
-   diferență sub `MAX_DELTA_KWH` (2000)
-2. `GetPreviousMeterRead` proaspăt — structura contorului se poate schimba lunar
-3. `GetMeterValue` — **test de fum, nu validare** (vezi mai jos); blochează doar
-   la erori explicite
-4. `SubmitSelfMeterRead`
-
-Rezultatul ajunge în `sensor.…_ultima_trimitere` (un `button` din HA nu poate întoarce
-nimic în interfață) plus o notificare persistentă. **Fără retry automat**: la eșec parțial
-nu știm dacă serverul a înregistrat.
-
-### `UsageSelfMeterReadEntity`
-
-Nu e o structură nouă: e înregistrarea din `GetPreviousMeterRead` copiată **verbatim**,
-cu aceleași nume de chei (`contractAccountID`, nu `UtilityAccountNumber`), plus
-`newmeterread` și `NewMeterReadDate` (format `DD/MM/YYYY`). O cheie redenumită rupe apelul.
-
-`GetPreviousMeterRead` cere payload propriu — `InstallationNumber`, `podValue`,
-`CustomerNumber` (= `BpNumber`), `BasicValue`, `Distributor`. Cu payload-ul generic
-răspunde HTTP 400, indiferent dacă fereastra e deschisă.
-
-### `GetMeterValue` NU validează valoarea
-
-Numele înșală. E un *getter*: caută o citire deja înregistrată pentru perioada
-curentă. Răspunsul normal înainte de o autocitire (măsurat 22.08.2026):
-
-```json
-{"status_code": 200, "responsestatus": 0, "result": {"Message": "No Record Found"}}
-```
-
-Cu payload greșit serverul răspunde **400**; cu payload corect răspunde **200** chiar
-și când nu găsește nimic. Deci un 200 confirmă că identificatorii sunt acceptați — util
-ca test de fum, dar **valoarea indexului nu e verificată de nimeni înainte de trimitere**.
-Validarea reală se întâmplă în `SubmitSelfMeterRead`.
-
-Consecință: singurele verificări dinaintea trimiterii sunt cele **locale** —
-fereastră deschisă, număr întreg, ≥ ultima citire din istoric, salt sub `MAX_DELTA_KWH`.
-
-### Praguri de validare
-
-`prevMRResult` din `GetPreviousMeterRead` e ultima citire **oficială a distribuitorului**
-(16294, aprilie) și poate fi mai veche decât ultima autocitire din istoric (16564, iunie).
-Pragul de jos se ia din istoric, nu din `prevMRResult`.
+> Proiect independent, fără legătură cu Hidroelectrica. Folosește API-ul aplicației
+> mobile, care se poate schimba fără notificare.
 
 ## Instalare (HACS)
 
-1. HACS → ⋮ → *Custom repositories* → URL `https://github.com/sfDuhNinja/hidro-ha`, tip *Integration*.
-2. Instalează „Hidroelectrica", repornește Home Assistant.
-3. *Setări → Dispozitive și servicii → Adaugă integrare → Hidroelectrica*.
+1. HACS → ⋮ → **Depozite personalizate** → `https://github.com/sfDuhNinja/hidro-ha`, tip **Integrare**.
+2. Instalează „Hidroelectrica" și repornește Home Assistant.
+3. **Setări → Dispozitive și servicii → Adaugă integrare → Hidroelectrica** și introdu
+   utilizatorul și parola de la iHidro.
+
+Parola rămâne în Home Assistant; conexiunea la `ihidro.ro` verifică certificatul TLS.
+Se folosește primul contract din cont.
+
+## Entități
+
+Datele se reîmprospătează la 6 ore.
+
+| Entitate | Ce arată |
+|---|---|
+| Sold de plată | Valoarea facturii curente (RON) |
+| Scadență | Data scadenței facturii |
+| Index contor | Ultimul index consumat înregistrat oficial (kWh) |
+| Index declarat | Indexul trimis de tine pentru perioada curentă |
+| Ultima citire / Tip ultima citire | Data și tipul (autocitire, distribuitor, regularizare) |
+| Consum ultima perioadă | Diferența dintre ultimele două citiri (kWh) |
+| Fereastră autocitire | `on` cât timp se poate trimite indexul |
+| Trimite indexul | Buton, vezi mai jos |
+| Ultima trimitere | Rezultatul ultimei trimiteri |
+
+Contoarele care nu sunt inteligente nu au curbă de consum: singura măsură e diferența
+dintre citiri.
+
+### Prosumator
+
+Detectat automat, când contorul are citiri pe registrul de energie injectată (`1.8.0_P`).
+Pentru un cont nou, entitățile apar singure după prima citire.
+
+| Entitate | Ce arată |
+|---|---|
+| Index energie produsă | Indexul de energie injectată (kWh) |
+| Producție ultima perioadă | Diferența dintre ultimele două citiri de producție |
+| Compensații ANRE primite | Suma compensațiilor, cu detaliu pe ani în atribute |
+
+Consumul și producția sunt urmărite separat. Butonul de trimitere a indexului este
+dezactivat pentru prosumatori, citirea făcând-o distribuitorul.
+
+> Suportul de prosumator urmează structura datelor din integrarea
+> [cnecrea/hidroelectrica](https://github.com/cnecrea/hidroelectrica) și nu a fost încă
+> validat pe un cont real cu istoric. Dacă o valoare nu iese, deschide un
+> [issue](https://github.com/sfDuhNinja/hidro-ha/issues).
+
+## Trimiterea indexului
+
+1. Creează un helper `input_number.index_hidroelectrica_de_trimis`.
+2. Pune în el indexul citit de pe contor.
+3. Apasă **Trimite indexul**. Butonul e disponibil doar în fereastra de autocitire.
+
+Înainte de trimitere se verifică local: fereastra deschisă, număr întreg, nu mai mic decât
+ultimul index și nu cu mai mult de 2000 kWh peste el. Nu există reîncercare automată;
+rezultatul apare în *Ultima trimitere* și într-o notificare. Un index trimis devine bază
+de facturare, deci verifică valoarea înainte să apeși.
+
+## Limitări
+
+- Fără serie de consum lunar pentru contoarele ne-inteligente.
+- Istoricul de facturi nu este expus de API pentru toate conturile.
+- Indexul curent nu poate fi citit cât fereastra de autocitire e închisă.
+
+## Dezvoltare
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install pytest pytest-asyncio
+.venv/bin/python -m pytest
+```
+
+Detalii despre API: [docs/API.md](docs/API.md). Scriptul `tools/recon.py` interoghează
+API-ul cu contul tău și salvează răspunsurile (sesiunea în `~/.config/hidro-recon/`,
+parola nu se salvează); redactează datele personale înainte să le publici ca fixture-uri.
+
+## Mulțumiri
+
+Cunoașterea API-ului vine din [cnecrea/hidroelectrica](https://github.com/cnecrea/hidroelectrica)
+(MIT). Codul e scris de la zero, fără licență plătită și cu verificarea TLS activă.
