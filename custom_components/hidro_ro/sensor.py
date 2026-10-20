@@ -175,6 +175,15 @@ async def async_setup_entry(
     entities: list[SensorEntity] = [HidroSensor(coordinator, desc) for desc in SENSORS]
     if parsing.is_prosumer(coordinator.data.get("history")):
         entities += [HidroSensor(coordinator, desc) for desc in PROSUMER_SENSORS]
+    else:
+        # Cont nou: registrul de producție apare abia după prima citire. Când
+        # apare, reîncarcă integrarea ca să se creeze senzorii de prosumator.
+        @callback
+        def _reload_if_prosumer() -> None:
+            if parsing.is_prosumer((coordinator.data or {}).get("history")):
+                hass.config_entries.async_schedule_reload(entry.entry_id)
+
+        entry.async_on_unload(coordinator.async_add_listener(_reload_if_prosumer))
     entities.append(HidroLastSubmissionSensor(coordinator))
     async_add_entities(entities)
 
