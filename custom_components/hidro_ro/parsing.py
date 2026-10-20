@@ -10,6 +10,8 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any
 
+from .const import REG_CONSUMPTION, REG_PRODUCTION
+
 
 def payload_of(resp: Any) -> Any:
     """Conținutul util. `Data` e uneori dict, alteori listă — nu presupune nimic."""
@@ -110,14 +112,22 @@ def window_details(resp: Any) -> dict[str, Any]:
 
 # ── Citiri de index ──
 
-def _readings(resp: Any) -> list[dict]:
-    """Citirile, cronologic. Registrul 1.8.0 = energie activă consumată."""
+def _readings(resp: Any, register: str = REG_CONSUMPTION) -> list[dict]:
+    """Citirile unui registru, cronologic.
+
+    1.8.0 = energie activă consumată, 1.8.0_P = energie injectată (prosumator).
+    Un prosumator le primește amestecate în același răspuns — fără filtrare,
+    indexul de producție ar ajunge „ultimul index” al consumului. Rândurile fără
+    `Registers` sunt tratate ca consum.
+    """
     data = payload_of(resp)
     if not isinstance(data, list):
         return []
     rows = []
     for item in data:
         if not isinstance(item, dict):
+            continue
+        if (item.get("Registers") or REG_CONSUMPTION) != register:
             continue
         when = parse_date(item.get("Date"))
         index = item.get("Index")
@@ -127,13 +137,13 @@ def _readings(resp: Any) -> list[dict]:
     return sorted(rows, key=lambda r: r["_date"])
 
 
-def latest_index(resp: Any) -> float | None:
-    rows = _readings(resp)
+def latest_index(resp: Any, register: str = REG_CONSUMPTION) -> float | None:
+    rows = _readings(resp, register)
     return rows[-1]["_index"] if rows else None
 
 
-def latest_index_details(resp: Any) -> dict[str, Any]:
-    rows = _readings(resp)
+def latest_index_details(resp: Any, register: str = REG_CONSUMPTION) -> dict[str, Any]:
+    rows = _readings(resp, register)
     if not rows:
         return {}
     last = rows[-1]
@@ -146,21 +156,21 @@ def latest_index_details(resp: Any) -> dict[str, Any]:
     }
 
 
-def consumption_since_previous(resp: Any) -> float | None:
+def consumption_since_previous(resp: Any, register: str = REG_CONSUMPTION) -> float | None:
     """Consumul dintre ultimele două citiri, în kWh.
 
     Singura măsură de consum disponibilă: contorul nu e inteligent, deci
     Hidroelectrica nu expune curbă de consum pentru acest loc.
     """
-    rows = _readings(resp)
+    rows = _readings(resp, register)
     if len(rows) < 2:
         return None
     delta = rows[-1]["_index"] - rows[-2]["_index"]
     return round(delta, 3) if delta >= 0 else None
 
 
-def consumption_details(resp: Any) -> dict[str, Any]:
-    rows = _readings(resp)
+def consumption_details(resp: Any, register: str = REG_CONSUMPTION) -> dict[str, Any]:
+    rows = _readings(resp, register)
     if len(rows) < 2:
         return {}
     previous, last = rows[-2], rows[-1]
@@ -400,3 +410,57 @@ def declared_index(resp: Any) -> float | None:
     if not isinstance(result, dict):
         return None
     return _as_float(result.get("data"))
+
+
+# ── Prosumator ──
+
+def is_prosumer(resp: Any) -> bool:
+    """Contorul are registru de energie injectată (1.8.0_P)."""
+    return bool(_readings(resp, REG_PRODUCTION))
+
+
+_COMP_PREFIXES = ("Comp ANRE", "Comp ", "Compensare")
+
+
+def compensation_payments(resp: Any) -> list[dict[str, Any]]:
+    """Compensațiile ANRE din istoricul plăților, cronologic.
+
+    `GetBillingHistoryList` amestecă încasările obișnuite cu compensațiile; le
+    deosebește doar prefixul din `channel`. Pentru un neprosumator lista e `null`.
+    """
+    result = result_of(resp)
+    entries = result.get("objBillingPaymentHistoryEntity")
+    if not isinstance(entries, list):
+        return []
+    rows = []
+    for item in entries:
+        if not isinstance(item, dict):
+            continue
+        if not str(item.get("channel") or "").startswith(_COMP_PREFIXES):
+            continue
+        when, amount = parse_date(item.get("paymentDate")), parse_amount(item.get("amount"))
+        if when is None or amount is None:
+            continue
+        rows.append({"data": when, "suma": amount, "canal": item.get("channel")})
+    return sorted(rows, key=lambda r: r["data"])
+
+
+def compensation_total(resp: Any) -> float | None:
+    rows = compensation_payments(resp)
+    return round(sum(r["suma"] for r in rows), 2) if rows else None
+
+
+def compensation_details(resp: Any) -> dict[str, Any]:
+    rows = compensation_payments(resp)
+    if not rows:
+        return {}
+    per_year: dict[str, float] = {}
+    for r in rows:
+        key = str(r["data"].year)
+        per_year[key] = round(per_year.get(key, 0.0) + r["suma"], 2)
+    return {
+        "ultima_plata": str(rows[-1]["data"]),
+        "ultima_suma": rows[-1]["suma"],
+        "numar_plati": len(rows),
+        "pe_an": per_year,
+    }

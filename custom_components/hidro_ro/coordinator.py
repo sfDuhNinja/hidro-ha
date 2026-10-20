@@ -75,7 +75,18 @@ class HidroCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         except HidroError as err:
             _LOGGER.debug("Indexul declarat nu e disponibil: %s", err)
 
+        # Compensațiile ANRE există doar la prosumator; un eșec aici nu doboară restul.
+        billing_history = None
+        if parsing.is_prosumer(history):
+            try:
+                billing_history = await self.client.async_get_billing_history(
+                    self.uan, self.account
+                )
+            except HidroError as err:
+                _LOGGER.debug("Istoricul plăților nu e disponibil: %s", err)
+
         return {
+            "billing_history": billing_history,
             "bill": bill,
             "window": window,
             "history": history,

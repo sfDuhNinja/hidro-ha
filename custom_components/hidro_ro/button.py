@@ -65,7 +65,12 @@ class HidroSubmitReadButton(CoordinatorEntity[HidroCoordinator], ButtonEntity):
     def available(self) -> bool:
         """Disponibil doar cât fereastra de autocitire e deschisă."""
         data = self.coordinator.data or {}
-        return super().available and parsing.window_open(data.get("window"))
+        # Prosumatorii nu autocitesc: contorul bidirecțional e citit de distribuitor.
+        return (
+            super().available
+            and parsing.window_open(data.get("window"))
+            and not parsing.is_prosumer(data.get("history"))
+        )
 
     def _record(self, rezultat: dict[str, Any]) -> None:
         """Anunță senzorul de status. El deține și persistă starea."""
@@ -97,6 +102,9 @@ class HidroSubmitReadButton(CoordinatorEntity[HidroCoordinator], ButtonEntity):
         data = self.coordinator.data or {}
 
         # ── 1. Verificări locale ──
+        if parsing.is_prosumer(data.get("history")):
+            await self._fail("Contul e de prosumator: autocitirea nu se face din integrare.")
+            return
         state = self.hass.states.get(INPUT_NUMBER_ENTITY)
         if state is None:
             await self._fail(f"Lipsește {INPUT_NUMBER_ENTITY}.")

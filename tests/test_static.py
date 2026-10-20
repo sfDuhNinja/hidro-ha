@@ -76,7 +76,7 @@ def test_combinatiile_device_class_state_class_sunt_valide():
 def test_cheile_senzorilor_sunt_unice():
     chei = [d["key"] for d in _descrieri() if "key" in d]
     # Numărul e intenționat fix: un senzor nou trebuie observat, nu strecurat.
-    assert len(chei) == 7, f"așteptam 7 senzori, am {len(chei)}: {chei}"
+    assert len(chei) == 10, f"așteptam 10 senzori (7 + 3 de prosumator), am {len(chei)}: {chei}"
     assert len(chei) == len(set(chei)), f"chei duplicate: {chei}"
 
 

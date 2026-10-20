@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import parsing
-from .const import DOMAIN, SIGNAL_SUBMISSION
+from .const import DOMAIN, REG_PRODUCTION, SIGNAL_SUBMISSION
 from .coordinator import HidroCoordinator
 
 _TZ = ZoneInfo("Europe/Bucharest")
@@ -129,6 +129,43 @@ SENSORS: tuple[HidroSensorDescription, ...] = (
 )
 
 
+# Doar pentru prosumator — vezi `parsing.is_prosumer`.
+PROSUMER_SENSORS: tuple[HidroSensorDescription, ...] = (
+    HidroSensorDescription(
+        key="index_produs",
+        translation_key="index_produs",
+        name="Index energie produsă",
+        icon="mdi:solar-power-variant",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value_fn=lambda d: parsing.latest_index(d.get("history"), REG_PRODUCTION),
+        attrs_fn=lambda d: parsing.latest_index_details(d.get("history"), REG_PRODUCTION),
+    ),
+    HidroSensorDescription(
+        key="productie_ultima_perioada",
+        translation_key="productie_ultima_perioada",
+        name="Producție ultima perioadă",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: parsing.consumption_since_previous(d.get("history"), REG_PRODUCTION),
+        attrs_fn=lambda d: parsing.consumption_details(d.get("history"), REG_PRODUCTION),
+    ),
+    HidroSensorDescription(
+        key="compensatii_anre",
+        translation_key="compensatii_anre",
+        name="Compensații ANRE primite",
+        icon="mdi:cash-plus",
+        native_unit_of_measurement="RON",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: parsing.compensation_total(d.get("billing_history")),
+        attrs_fn=lambda d: parsing.compensation_details(d.get("billing_history")),
+    ),
+)
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -136,6 +173,8 @@ async def async_setup_entry(
 ) -> None:
     coordinator: HidroCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: list[SensorEntity] = [HidroSensor(coordinator, desc) for desc in SENSORS]
+    if parsing.is_prosumer(coordinator.data.get("history")):
+        entities += [HidroSensor(coordinator, desc) for desc in PROSUMER_SENSORS]
     entities.append(HidroLastSubmissionSensor(coordinator))
     async_add_entities(entities)
 

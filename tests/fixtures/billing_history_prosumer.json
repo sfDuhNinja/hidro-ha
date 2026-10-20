@@ -1,0 +1,17 @@
+{
+  "_sintetic": "construit după structura din GetBillingHistoryList; nu e captură reală",
+  "_http_status": 200,
+  "data": {
+    "status_code": 200,
+    "responsestatus": 1,
+    "result": {
+      "objBillingHistoryEntity": null,
+      "objBillingPaymentHistoryEntity": [
+        {"amount": "347,94", "paymentDate": "10/05/2026", "channel": "Incasari-Online", "type": "Plata", "status": "Achitat"},
+        {"amount": "120,50", "paymentDate": "15/05/2026", "channel": "Comp ANRE-Ex1", "type": "Compensare", "status": "Achitat"},
+        {"amount": "1.080,25", "paymentDate": "15/06/2026", "channel": "Comp ANRE-Ex2", "type": "Compensare", "status": "Achitat"}
+      ],
+      "objBillingPaymentType": null
+    }
+  }
+}

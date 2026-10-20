@@ -1,0 +1,16 @@
+{
+  "_sintetic": "construit după structura din GetMeterReadHistory; nu e captură reală",
+  "_http_status": 200,
+  "data": {
+    "status_code": 200,
+    "responsestatus": 1,
+    "result": {
+      "Data": [
+        {"POD": "ID_08", "CounterSeries": "0000000000000", "RegisterDescription": "Energie Activă", "Registers": "1.8.0", "ReadingType": "Regularizare", "Date": "29/04/2026", "Index": 1000},
+        {"POD": "ID_08", "CounterSeries": "0000000000000", "RegisterDescription": "Energie Activă Produsă", "Registers": "1.8.0_P", "ReadingType": "Regularizare", "Date": "29/04/2026", "Index": 5000},
+        {"POD": "ID_08", "CounterSeries": "0000000000000", "RegisterDescription": "Energie Activă", "Registers": "1.8.0", "ReadingType": "Citire distribuitor", "Date": "29/06/2026", "Index": 1300},
+        {"POD": "ID_08", "CounterSeries": "0000000000000", "RegisterDescription": "Energie Activă Produsă", "Registers": "1.8.0_P", "ReadingType": "Citire distribuitor", "Date": "29/06/2026", "Index": 5900}
+      ]
+    }
+  }
+}

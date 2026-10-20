@@ -316,3 +316,31 @@ def test_declaratul_difera_de_oficialul_inregistrat(parsing, fx):
     assert declarat == 16984
     assert oficial == 16564
     assert declarat != oficial, "sursele sunt distincte — declaratul o ia înainte"
+
+
+# ── Prosumator (fixture-uri sintetice) ──
+
+def test_neprosumatorul_nu_e_detectat_ca_prosumator(parsing, fx):
+    assert parsing.is_prosumer(fx("meter_read_history")) is False
+    assert parsing.compensation_payments(fx("billing_history")) == []
+    assert parsing.compensation_total(fx("billing_history")) is None
+
+
+def test_registrele_nu_se_amesteca(parsing, fx):
+    h = fx("meter_read_history_prosumer")
+    assert parsing.is_prosumer(h) is True
+    # Fără filtrare, „ultimul index” de consum ar fi fost 5900 (producția).
+    assert parsing.latest_index(h) == 1300
+    assert parsing.latest_index(h, "1.8.0_P") == 5900
+    assert parsing.consumption_since_previous(h) == 300
+    assert parsing.consumption_since_previous(h, "1.8.0_P") == 900
+    assert parsing.consumption_details(h, "1.8.0_P")["zile"] == 61
+
+
+def test_compensatiile_anre_se_separa_de_incasari(parsing, fx):
+    b = fx("billing_history_prosumer")
+    assert len(parsing.compensation_payments(b)) == 2   # încasarea obișnuită e exclusă
+    assert parsing.compensation_total(b) == pytest.approx(1200.75)
+    det = parsing.compensation_details(b)
+    assert det["ultima_suma"] == pytest.approx(1080.25)
+    assert det["pe_an"] == {"2026": pytest.approx(1200.75)}

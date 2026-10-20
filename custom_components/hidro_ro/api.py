@@ -28,6 +28,7 @@ from .const import (
     API_BASE,
     API_TIMEOUT,
     EP_BILL,
+    EP_BILLING_HISTORY,
     EP_GET_ID,
     EP_PODS,
     EP_METER_VALUE,
@@ -239,4 +240,13 @@ class HidroClient:
             "utilityAccountNumber": uan, "podValue": pod,
             "LanguageCode": LANGUAGE, "InstallationNumber": installation,
             "SerialNumber": [],
+        })
+
+    async def async_get_billing_history(self, uan: str, account: str) -> Any:
+        """Plățile, inclusiv compensațiile ANRE ale prosumatorilor."""
+        await self._ensure_auth()
+        return await self._call(EP_BILLING_HISTORY, {
+            "LanguageCode": LANGUAGE, "UserID": self._user_id,
+            "UtilityAccountNumber": uan, "AccountNumber": account,
+            "FromDate": "", "ToDate": "",
         })

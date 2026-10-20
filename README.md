@@ -3,8 +3,7 @@
 Integrare Home Assistant pentru Hidroelectrica (iHidro) — vizibilitate pe costuri
 pentru locuința din București (`ha-dizonaur`, HA „Dizonaur").
 
-Fără regim de prosumator: nu există export, index de injecție sau tarif de răscumpărare.
-Pentru varianta cu fotovoltaice vezi proiectul separat `eon-ro-ha`.
+Suportă și conturile de **prosumator** (contor bidirecțional) — vezi secțiunea de mai jos.
 
 ## Stadiu
 
@@ -65,6 +64,22 @@ Răspunsurile sunt împachetate ca `{result: {Data: {...}}}`.
 | `sensor.hidroelectrica_index_contor` | `GetMeterReadHistory` |
 | `sensor.hidroelectrica_consum_ultima_perioada` | delta ultimelor două citiri |
 | `binary_sensor.hidroelectrica_fereastra_autocitire` | `GetWindowDates` |
+
+## Prosumator
+
+Detectat automat: contorul întoarce citiri pe registrul `1.8.0_P` (energie injectată).
+Registrele nu se amestecă — `Index contor` și `Consum ultima perioadă` folosesc doar `1.8.0`.
+
+| Entitate (doar la prosumator) | Sursă |
+|---|---|
+| `sensor.…_index_energie_produsa` | `GetMeterReadHistory`, registrul `1.8.0_P` |
+| `sensor.…_productie_ultima_perioada` | delta ultimelor două citiri de producție |
+| `sensor.…_compensatii_anre_primite` | `GetBillingHistoryList`, plățile cu canal `Comp ANRE…` |
+
+Butonul de trimitere index e **indisponibil** pentru prosumator (citirea o face distribuitorul).
+
+> Structura datelor de prosumator e construită după integrarea upstream, nu după o captură
+> reală; fixture-urile `*_prosumer.json` sunt sintetice. Verifică valorile pe un cont real.
 
 ## Ce NU se poate
 

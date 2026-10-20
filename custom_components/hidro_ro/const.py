@@ -33,6 +33,7 @@ EP_READ_HISTORY: Final = "/Service/IndexHistory/GetMeterReadHistory"
 EP_PREVIOUS_READ: Final = "/Service/SelfMeterReading/GetPreviousMeterRead"
 EP_METER_VALUE: Final = "/Service/SelfMeterReading/GetMeterValue"
 EP_SUBMIT_READ: Final = "/Service/SelfMeterReading/SubmitSelfMeterRead"
+EP_BILLING_HISTORY: Final = "/Service/Billing/GetBillingHistoryList"
 
 CONF_ACCOUNT: Final = "utility_account_number"
 CONF_ACCOUNT_NUMBER: Final = "account_number"
@@ -51,3 +52,7 @@ INPUT_NUMBER_ENTITY: Final = "input_number.index_hidroelectrica_de_trimis"
 # Starea aparține entității care o reprezintă, nu coordinatorului — treaba lui e
 # să aducă date de la API, nu să țină minte ce a făcut un buton.
 SIGNAL_SUBMISSION: Final = "hidro_ro_submission_{entry_id}"
+
+# Registrele contorului. Un prosumator are două: consum și energie injectată.
+REG_CONSUMPTION: Final = "1.8.0"
+REG_PRODUCTION: Final = "1.8.0_P"
