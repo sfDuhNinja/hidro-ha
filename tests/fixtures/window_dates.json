@@ -1,0 +1,22 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "7.5.2",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:40 PM",
+    "response_time": "2026-08-22 02:30:40 PM",
+    "result": {
+      "Status": 1,
+      "Message": "Success",
+      "MessageCode": null,
+      "Data": {
+        "OpeningDate": "22",
+        "ClosingDate": "26",
+        "NextMonthOpeningDate": "22/09/2026",
+        "NextMonthClosingDate": "26/08/2026",
+        "Is_Window_Open": "1"
+      }
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "7.5.2",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:43 PM",
+    "response_time": "2026-08-22 02:30:43 PM",
+    "result": {
+      "Status": 1,
+      "Message": "Record found",
+      "MessageCode": null,
+      "Data": {
+        "objUsageGenerationResultSetOne": [],
+        "objUsageGenerationResultSetTwo": [
+          {
+            "Month": 6,
+            "Year": 2026,
+            "UsageDate": "22/06/2026",
+            "UsageValue": 283.45,
+            "value": 270.0,
+            "DemandValue": 0,
+            "BilingDates": "29/04/2026-22/06/2026",
+            "BillingDays": "55",
+            "FromDate": "29/04/2026",
+            "ToDate": "22/06/2026",
+            "UsageColorCode": "#0c75df",
+            "WeatherUsageDate": "22/06/2026",
+            "DemandColorCode": "#000000"
+          },
+          {
+            "Month": 7,
+            "Year": 2026,
+            "UsageDate": "31/07/2026",
+            "UsageValue": 160.45,
+            "value": 152.0,
+            "DemandValue": 0,
+            "BilingDates": "23/06/2026-31/07/2026",
+            "BillingDays": "39",
+            "FromDate": "23/06/2026",
+            "ToDate": "31/07/2026",
+            "UsageColorCode": "#0c75df",
+            "WeatherUsageDate": "31/07/2026",
+            "DemandColorCode": "#000000"
+          }
+        ],
+        "objUsageGenerationResultSetThree": [
+          {
+            "FromDate": "iunie 2026",
+            "ToDate": "iulie 2026"
+          }
+        ],
+        "listUsageColor": [
+          {
+            "Min": "",
+            "Mid": "",
+            "Max": null,
+            "LowColor": "#85baef",
+            "MidColor": "#0c75df",
+            "HighColor": "#2e5299",
+            "WaterAllocationColor": "#DFFF00",
+            "SolarGenerationColor": "#f4d03f",
+            "ComparePreviousColor": null,
+            "CompareUtilityColor": null,
+            "CompareCurrentColor": null,
+            "CompareZipAllocationColor": null,
+            "IsLastUsages": false,
+            "DisplayMonth": null
+          }
+        ],
+        "listUsageRangeValue": null,
+        "getTentativeData": [
+          {
+            "Skey": 0,
+            "AccountNumber": "ID_02",
+            "UsageDate": "",
+            "SoFar": 0.0,
+            "ExpectedUsage": 0.0,
+            "PeakLoad": 0.0,
+            "LoadFactor": 0.0,
+            "Average": 221.95,
+            "Highest": 283.45,
+            "SoFarColorCode": "#0c75df",
+            "ExpectedUsageColorCode": "#000000",
+            "PeakLoadColorCode": "#000000",
+            "LoadFactorColorCode": "#000000",
+            "AverageColorCode": "#0c75df",
+            "HighestColorCode": "#0c75df",
+            "UpToDecimalPlaces": 2,
+            "IsOnlyAMI": false,
+            "UsageCycle": "NA"
+          }
+        ],
+        "getConfigData": null
+      }
+    }
+  }
+}

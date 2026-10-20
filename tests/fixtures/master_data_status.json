@@ -1,0 +1,62 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "10.0.0.022822_1",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:39 PM",
+    "response_time": "2026-08-22 02:30:39 PM",
+    "result": {
+      "Status": 1,
+      "Message": "Record Found",
+      "MessageCode": null,
+      "Data": [
+        {
+          "MasterID": 1,
+          "ServiceName": "GetSiteStatus",
+          "LastUpdated": "2026-08-22T08:41:05.733"
+        },
+        {
+          "MasterID": 3,
+          "ServiceName": "GetAllUrlInfo",
+          "LastUpdated": "2026-08-21T09:35:40.317"
+        },
+        {
+          "MasterID": 4,
+          "ServiceName": "GetSetFeature",
+          "LastUpdated": "2026-07-28T06:04:20.33"
+        },
+        {
+          "MasterID": 5,
+          "ServiceName": "GetVersionStatus",
+          "LastUpdated": "2018-04-01T07:31:40.39"
+        },
+        {
+          "MasterID": 6,
+          "ServiceName": "GetSetValidationMob",
+          "LastUpdated": "2026-08-21T09:35:40.32"
+        },
+        {
+          "MasterID": 7,
+          "ServiceName": "GetEnergyEfficiency",
+          "LastUpdated": "2026-08-21T08:28:10.337"
+        },
+        {
+          "MasterID": 8,
+          "ServiceName": "LoadApplicationLabels",
+          "LastUpdated": "2026-07-07T02:56:38.2"
+        },
+        {
+          "MasterID": 9,
+          "ServiceName": "GetPaymentLocation",
+          "LastUpdated": "2022-03-03T13:59:23.013"
+        },
+        {
+          "MasterID": 10,
+          "ServiceName": "GetAllLanguage",
+          "LastUpdated": "2025-01-29T11:34:50.547"
+        }
+      ]
+    }
+  }
+}

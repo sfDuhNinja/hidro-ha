@@ -1,0 +1,33 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "7.5.2",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:40 PM",
+    "response_time": "2026-08-22 02:30:40 PM",
+    "result": {
+      "MeterDetails": [
+        {
+          "MeterType": "E",
+          "MeterNumber": "ID_06",
+          "IsAMI": false,
+          "Status": 1,
+          "Address": null
+        }
+      ],
+      "MeterCheckIsAMI": null,
+      "HighUsage": [
+        {
+          "MeterType": "E",
+          "HighUsageColorCode": "#a9a8a8"
+        }
+      ],
+      "MeterTypeDetails": [
+        {
+          "MeterType": "E"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hidroelectrica",
+        "description": "Datele contului iHidro.",
+        "data": { "username": "Utilizator", "password": "Parolă" }
+      }
+    },
+    "error": {
+      "invalid_auth": "Utilizator sau parolă incorecte.",
+      "cannot_connect": "Nu se poate contacta serverul Hidroelectrica."
+    },
+    "abort": {
+      "already_configured": "Contul este deja configurat.",
+      "no_accounts": "Nu s-a găsit niciun cont.",
+      "reauth_successful": "Reautentificare reușită."
+    }
+  }
+}

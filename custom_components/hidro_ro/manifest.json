@@ -1,0 +1,14 @@
+{
+  "codeowners": [
+    "@sfDuhNinja"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/sfDuhNinja/hidro-ha",
+  "domain": "hidro_ro",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/sfDuhNinja/hidro-ha/issues",
+  "name": "Hidroelectrica",
+  "requirements": [],
+  "version": "0.1.0"
+}

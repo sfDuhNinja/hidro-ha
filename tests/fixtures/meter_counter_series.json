@@ -1,0 +1,19 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "7.5.2",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:42 PM",
+    "response_time": "2026-08-22 02:30:42 PM",
+    "result": {
+      "Data": [
+        {
+          "CounterSeries": "0000000000000",
+          "Index": "16294,16564",
+          "MrDate": "2026-06-22T00:00:00"
+        }
+      ]
+    }
+  }
+}

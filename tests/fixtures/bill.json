@@ -1,0 +1,18 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "7.5.2",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:40 PM",
+    "response_time": "2026-08-22 02:30:40 PM",
+    "result": {
+      "Table1": null,
+      "objResponseProxy": null,
+      "billamount": "443,90",
+      "invoicenumber": "ID_05",
+      "rembalance": "443,90",
+      "duedate": "20260921"
+    }
+  }
+}

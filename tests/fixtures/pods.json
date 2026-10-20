@@ -1,0 +1,20 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "7.5.2",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:41 PM",
+    "response_time": "2026-08-22 02:30:41 PM",
+    "result": {
+      "Data": [
+        {
+          "accountID": "ID_03",
+          "installation": "ID_07",
+          "contractAccountID": "ID_04",
+          "pod": "ID_08"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "7.5.2",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:42 PM",
+    "response_time": "2026-08-22 02:30:42 PM",
+    "result": {
+      "Status": 1,
+      "Message": "Record found",
+      "MessageCode": null,
+      "Data": {
+        "objUsageGenerationResultSetOne": [
+          {
+            "CityName": "BUCURESTI SECTORUL 3",
+            "StateName": "B",
+            "CountryName": "ROMANIA",
+            "FromDate": "",
+            "ToDate": "",
+            "Zipcode": "«redactat»"
+          }
+        ],
+        "objUsageGenerationResultSetTwo": [],
+        "objUsageGenerationResultSetThree": [
+          {
+            "FromDate": "23/07/2026",
+            "ToDate": "21/08/2026"
+          }
+        ],
+        "listUsageColor": null,
+        "listUsageRangeValue": null,
+        "getTentativeData": [
+          {
+            "Skey": 0,
+            "AccountNumber": "ID_02",
+            "UsageDate": "",
+            "SoFar": 0.0,
+            "ExpectedUsage": 0.0,
+            "PeakLoad": 0.0,
+            "LoadFactor": 0.0,
+            "Average": 0.0,
+            "Highest": 0.0,
+            "SoFarColorCode": null,
+            "ExpectedUsageColorCode": "#000000",
+            "PeakLoadColorCode": "#000000",
+            "LoadFactorColorCode": "#000000",
+            "AverageColorCode": null,
+            "HighestColorCode": null,
+            "UpToDecimalPlaces": 2,
+            "IsOnlyAMI": false,
+            "UsageCycle": "NA"
+          }
+        ],
+        "getConfigData": null
+      }
+    }
+  }
+}

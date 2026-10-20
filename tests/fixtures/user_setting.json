@@ -1,0 +1,92 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "10.0.0.022822_1",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:39 PM",
+    "response_time": "2026-08-22 02:30:39 PM",
+    "result": {
+      "Status": 1,
+      "Message": "Record",
+      "MessageCode": null,
+      "Data": {
+        "Table": [],
+        "Table1": [
+          {
+            "UserID": "ID_01",
+            "AddressId": 1475052,
+            "AccountNumber": "ID_02",
+            "AddressDetails": "55",
+            "DefaultAddressId": 1475052,
+            "DefaultAccountNumber": 1475195,
+            "RoleID": 3,
+            "BpNumber": "ID_03",
+            "Latitude": 42.331429,
+            "Longitude": -83.045753,
+            "ZipCode": "«redactat»",
+            "Address": "«redactat»",
+            "MapId": 1,
+            "UtilityAccountNumber": "ID_04",
+            "MeterType": "E",
+            "CustomerType": 1,
+            "CustomerTypeDesc": "Residential",
+            "CountryName": "ROMANIA",
+            "CityName": "BUCURESTI SECTORUL 3",
+            "CityId": 30543,
+            "StateCode": "B",
+            "StateId": 97,
+            "StateName": "B",
+            "DefaultPaymentType": 1,
+            "AccountTypeId": 0,
+            "IsDefaultAccount": true,
+            "HasNonAMIMeter": true,
+            "NickName": "",
+            "LastUpdate": "2026-04-25T15:30:10.297",
+            "EnterpriseAccountMaxLimit": 4,
+            "MassMarketAccountMaxLimit": 2,
+            "PageSize": 0,
+            "AddressSubType": null
+          }
+        ],
+        "Table2": [
+          {
+            "UserID": "ID_01",
+            "AddressId": 1475052,
+            "AccountNumber": "ID_02",
+            "AddressDetails": "55",
+            "DefaultAddressId": 1475052,
+            "DefaultAccountNumber": 1475195,
+            "RoleID": 3,
+            "BpNumber": "ID_03",
+            "Latitude": 42.331429,
+            "Longitude": -83.045753,
+            "ZipCode": "«redactat»",
+            "Address": "«redactat»",
+            "MapId": 1,
+            "UtilityAccountNumber": "ID_04",
+            "MeterType": "E",
+            "CustomerType": 1,
+            "CustomerTypeDesc": "Residential",
+            "CountryName": "ROMANIA",
+            "CityName": "BUCURESTI SECTORUL 3",
+            "CityId": 30543,
+            "StateCode": "B",
+            "StateId": 97,
+            "StateName": "B",
+            "DefaultPaymentType": 1,
+            "AccountTypeId": 0,
+            "IsDefaultAccount": true,
+            "HasNonAMIMeter": true,
+            "NickName": "",
+            "LastUpdate": "2026-04-25T15:30:10.297",
+            "EnterpriseAccountMaxLimit": 4,
+            "MassMarketAccountMaxLimit": 2,
+            "PageSize": 0,
+            "AddressSubType": null
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "_http_status": 200,
+  "data": {
+    "version": "7.5.2",
+    "status_code": 200,
+    "responsestatus": 1,
+    "request_time": "2026-08-22 02:30:42 PM",
+    "response_time": "2026-08-22 02:30:42 PM",
+    "result": {
+      "Data": [
+        {
+          "contractAccountID": "ID_04",
+          "accountID": "ID_09",
+          "equipmentNo": "ID_10",
+          "registerNo": "001",
+          "registerType": "E3",
+          "uom": "KWH",
+          "preDecimals": "07",
+          "postDecimals": "09",
+          "noMROrder": "",
+          "prevMRResult": "16294",
+          "prevMRDate": "2026-04-29T00:00:00Z",
+          "prevMRRsn": "06",
+          "prevMRCat": "01",
+          "serialNumber": "ID_06",
+          "pod": "ID_08",
+          "registerCat": "1.8.0",
+          "distributor": "E-Distributie Muntenia Nord",
+          "meterInterval": "Lunar",
+          "supplier": "HE",
+          "distCustomer": "«redactat»",
+          "distCustomerId": "«redactat»",
+          "distContract": "«redactat»",
+          "distContractDate": "04/29/2026 00:00:00",
+          "installationNumber": ""
+        }
+      ]
+    }
+  }
+}
