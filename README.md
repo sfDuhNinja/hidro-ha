@@ -83,6 +83,10 @@ Detalii despre API: [docs/API.md](docs/API.md). Scriptul `tools/recon.py` intero
 API-ul cu contul tău și salvează răspunsurile (sesiunea în `~/.config/hidro-recon/`,
 parola nu se salvează); redactează datele personale înainte să le publici ca fixture-uri.
 
+## Licență
+
+[MIT](LICENSE).
+
 ## Mulțumiri
 
 Cunoașterea API-ului vine din [cnecrea/hidroelectrica](https://github.com/cnecrea/hidroelectrica)
